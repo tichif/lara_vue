@@ -10,6 +10,8 @@ window.Vue = require("vue");
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
+Vue.component("pagination", require("laravel-vue-pagination"));
+
 // import the Vue Component
 import Home from "./components/HomeComponent";
 import Task from "./components/TaskComponent";
