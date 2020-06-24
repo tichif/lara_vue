@@ -14,7 +14,12 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = $this->fetchTasksByOrder();
+        if (request('search') !== null) {
+            $tasks['data'] = Task::orderBy('created_at', 'DESC')->where('name', 'like', '%' . request('search') . '%')->get();
+        } else {
+            $tasks = $this->fetchTasksByOrder();
+        }
+
         return response()->json([
             'tasks' => $tasks
         ]);

@@ -1,5 +1,16 @@
 <template>
   <div class="container">
+    <div class="form-row">
+      <div class="row-col">
+        <input
+          type="text"
+          class="form-control"
+          @keyup="searchTask"
+          v-model="search"
+          placeholder="Rechercher une tache..."
+        />
+      </div>
+    </div>
     <create-task @createdTask="refresh"></create-task>
     <ul class="list-group">
       <li
@@ -48,7 +59,8 @@ export default {
   data() {
     return {
       tasks: {},
-      task: {}
+      task: {},
+      search: ""
     };
   },
   components: { CreateTask, EditTask, DeleteTask },
@@ -71,6 +83,23 @@ export default {
           this.task = data.task;
         })
         .catch(err => console.log(err));
+    },
+    searchTask() {
+      if (this.search.length > 0) {
+        axios
+          .get(`/tasksList/${this.search}`)
+          .then(({ data }) => {
+            this.tasks = data.tasks;
+          })
+          .catch(err => console.log(err));
+      } else {
+        axios
+          .get("/tasksList")
+          .then(({ data }) => {
+            this.tasks = data.tasks;
+          })
+          .catch(err => console.log(err));
+      }
     }
   }
 };

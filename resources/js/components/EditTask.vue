@@ -22,7 +22,6 @@
               <label for="name">Nom de la tache</label>
               <textarea
                 name="name"
-                id="name"
                 placeholder="Nom de la tache"
                 v-model="task.name"
                 class="form-control"

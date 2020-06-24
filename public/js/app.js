@@ -1962,7 +1962,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2120,7 +2119,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     task: {
@@ -2213,6 +2211,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2230,7 +2239,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       tasks: {},
-      task: {}
+      task: {},
+      search: ""
     };
   },
   components: {
@@ -2262,6 +2272,25 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (err) {
         return console.log(err);
       });
+    },
+    searchTask: function searchTask() {
+      var _this4 = this;
+
+      if (this.search.length > 0) {
+        axios.get("/tasksList/".concat(this.search)).then(function (_ref4) {
+          var data = _ref4.data;
+          _this4.tasks = data.tasks;
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      } else {
+        axios.get("/tasksList").then(function (_ref5) {
+          var data = _ref5.data;
+          _this4.tasks = data.tasks;
+        })["catch"](function (err) {
+          return console.log(err);
+        });
+      }
     }
   }
 });
@@ -38451,11 +38480,7 @@ var render = function() {
                     }
                   ],
                   staticClass: "form-control",
-                  attrs: {
-                    name: "name",
-                    id: "name",
-                    placeholder: "Nom de la tache"
-                  },
+                  attrs: { name: "name", placeholder: "Nom de la tache" },
                   domProps: { value: _vm.name },
                   on: {
                     input: function($event) {
@@ -38689,11 +38714,7 @@ var render = function() {
                     }
                   ],
                   staticClass: "form-control",
-                  attrs: {
-                    name: "name",
-                    id: "name",
-                    placeholder: "Nom de la tache"
-                  },
+                  attrs: { name: "name", placeholder: "Nom de la tache" },
                   domProps: { value: _vm.task.name },
                   on: {
                     input: function($event) {
@@ -38821,6 +38842,33 @@ var render = function() {
     "div",
     { staticClass: "container" },
     [
+      _c("div", { staticClass: "form-row" }, [
+        _c("div", { staticClass: "row-col" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.search,
+                expression: "search"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", placeholder: "Rechercher une tache..." },
+            domProps: { value: _vm.search },
+            on: {
+              keyup: _vm.searchTask,
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.search = $event.target.value
+              }
+            }
+          })
+        ])
+      ]),
+      _vm._v(" "),
       _c("create-task", { on: { createdTask: _vm.refresh } }),
       _vm._v(" "),
       _c(
