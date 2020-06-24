@@ -18,3 +18,4 @@ Route::get('/', function () {
 });
 
 Route::get('/tasksList', 'TasksController@index');
+Route::post('/tasksList', 'TasksController@store');
