@@ -14,7 +14,7 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::orderBy('created_at', 'DESC')->paginate(5);
+        $tasks = $this->fetchTasksByOrder();
         return response()->json([
             'tasks' => $tasks
         ]);
@@ -39,7 +39,7 @@ class TasksController extends Controller
     public function store(Request $request)
     {
         Task::create(['name' => $request->name]);
-        $tasks = Task::orderBy('created_at', 'DESC')->paginate(5);
+        $tasks = $this->fetchTasksByOrder();
         if (request()->expectsJson()) {
             return response()->json([
                 'message' => 'Tache créée',
@@ -56,7 +56,12 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = Task::findOrFail($id);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'task' => $task
+            ]);
+        }
     }
 
     /**
@@ -79,7 +84,18 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $task  = Task::findOrFail($id);
+        $task->name = $request->name;
+        $task->save();
+
+        $tasks = $this->fetchTasksByOrder();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Tache modifié',
+                'tasks' => $tasks
+            ]);
+        }
     }
 
     /**
@@ -91,5 +107,10 @@ class TasksController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function fetchTasksByOrder()
+    {
+        return Task::orderBy('created_at', 'DESC')->paginate(5);
     }
 }

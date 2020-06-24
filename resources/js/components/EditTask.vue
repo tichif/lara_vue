@@ -1,26 +1,18 @@
 <template>
   <div>
-    <!-- Button trigger modal -->
-    <button
-      type="button"
-      class="btn btn-primary my-3"
-      data-toggle="modal"
-      data-target="#exampleModal"
-    >Ajouter une tache</button>
-
     <!-- Modal -->
     <div
       class="modal fade"
-      id="exampleModal"
+      id="editModal"
       tabindex="-1"
       role="dialog"
-      aria-labelledby="exampleModalLabel"
+      aria-labelledby="editModal"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ajouter une tache</h5>
+            <h5 class="modal-title" id="editModal">Modifier une tache</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -32,7 +24,7 @@
                 name="name"
                 id="name"
                 placeholder="Nom de la tache"
-                v-model="name"
+                v-model="task.name"
                 class="form-control"
               ></textarea>
             </form>
@@ -42,10 +34,9 @@
             <button
               type="submit"
               class="btn btn-primary"
-              :disabled="isValid"
-              @click.prevent="storeTask"
+              @click.prevent="editTask"
               data-dismiss="modal"
-            >Ajouter</button>
+            >Modifier</button>
           </div>
         </div>
       </div>
@@ -55,28 +46,26 @@
 
 <script>
 export default {
-  data() {
-    return {
-      name: ""
-    };
-  },
-  methods: {
-    storeTask() {
-      axios
-        .post("/tasksList", {
-          name: this.name
-        })
-        .then(({ data }) => {
-          this.name = "";
-          console.log(data.message);
-          this.$emit("createdTask", data.tasks);
-        })
-        .catch(err => console.log(err));
+  props: {
+    task: {
+      type: Object,
+      required: true
     }
   },
-  computed: {
-    isValid() {
-      return this.name.length < 5;
+  data() {
+    return {};
+  },
+  methods: {
+    editTask() {
+      axios
+        .patch(`/tasksList/${this.task.id}`, {
+          name: this.task.name
+        })
+        .then(({ data }) => {
+          console.log(data.message);
+          this.$emit("tasks", data.tasks);
+        })
+        .catch(err => console.log(err));
     }
   }
 };

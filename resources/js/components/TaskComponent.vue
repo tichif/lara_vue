@@ -1,10 +1,22 @@
 <template>
   <div class="container">
-    <create-task @createdTask="createdTask"></create-task>
+    <create-task @createdTask="refresh"></create-task>
     <ul class="list-group">
-      <li class="list-group-item" v-for="task in tasks.data" :key="task.id">
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+        v-for="task in tasks.data"
+        :key="task.id"
+      >
         <a href="#">{{ task.name }}</a>
+        <button
+          type="button"
+          class="btn btn-secondary my-3"
+          data-toggle="modal"
+          data-target="#editModal"
+          @click.prevent="getTask(task.id)"
+        >Editer un tache</button>
       </li>
+      <edit-task :task="taskToEdit" @tasks="refresh"></edit-task>
     </ul>
     <pagination :data="tasks" @pagination-change-page="getResults" class="mt-5"></pagination>
   </div>
@@ -12,6 +24,7 @@
 
 <script>
 import CreateTask from "./CreateTask";
+import EditTask from "./EditTask";
 export default {
   created() {
     axios
@@ -23,10 +36,11 @@ export default {
   },
   data() {
     return {
-      tasks: {}
+      tasks: {},
+      taskToEdit: {}
     };
   },
-  components: { CreateTask },
+  components: { CreateTask, EditTask },
   methods: {
     getResults(page = 1) {
       axios
@@ -36,8 +50,16 @@ export default {
         })
         .catch(err => console.log(err));
     },
-    createdTask(tasks) {
+    refresh(tasks) {
       this.tasks = tasks;
+    },
+    getTask(id) {
+      axios
+        .get(`/tasksList/${id}`)
+        .then(({ data }) => {
+          this.taskToEdit = data.task;
+        })
+        .catch(err => console.log(err));
     }
   }
 };
