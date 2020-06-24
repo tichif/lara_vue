@@ -106,7 +106,16 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $task  = Task::findOrFail($id);
+        $task->delete();
+        $tasks = $this->fetchTasksByOrder();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Tache supprimée',
+                'tasks' => $tasks
+            ]);
+        }
     }
 
     public function fetchTasksByOrder()

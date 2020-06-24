@@ -8,15 +8,25 @@
         :key="task.id"
       >
         <a href="#">{{ task.name }}</a>
-        <button
-          type="button"
-          class="btn btn-secondary my-3"
-          data-toggle="modal"
-          data-target="#editModal"
-          @click.prevent="getTask(task.id)"
-        >Editer un tache</button>
+        <div>
+          <button
+            type="button"
+            class="btn btn-secondary my-3"
+            data-toggle="modal"
+            data-target="#editModal"
+            @click.prevent="getTask(task.id)"
+          >Editer une tache</button>
+          <button
+            type="button"
+            class="btn btn-danger my-3"
+            data-toggle="modal"
+            data-target="#deleteModal"
+            @click.prevent="getTask(task.id)"
+          >Supprimer une tache</button>
+        </div>
       </li>
-      <edit-task :task="taskToEdit" @tasks="refresh"></edit-task>
+      <edit-task :task="task" @tasks="refresh"></edit-task>
+      <delete-task :task="task" @taskDeleted="refresh"></delete-task>
     </ul>
     <pagination :data="tasks" @pagination-change-page="getResults" class="mt-5"></pagination>
   </div>
@@ -25,6 +35,7 @@
 <script>
 import CreateTask from "./CreateTask";
 import EditTask from "./EditTask";
+import DeleteTask from "./DeleteTask";
 export default {
   created() {
     axios
@@ -37,10 +48,10 @@ export default {
   data() {
     return {
       tasks: {},
-      taskToEdit: {}
+      task: {}
     };
   },
-  components: { CreateTask, EditTask },
+  components: { CreateTask, EditTask, DeleteTask },
   methods: {
     getResults(page = 1) {
       axios
@@ -57,7 +68,7 @@ export default {
       axios
         .get(`/tasksList/${id}`)
         .then(({ data }) => {
-          this.taskToEdit = data.task;
+          this.task = data.task;
         })
         .catch(err => console.log(err));
     }
